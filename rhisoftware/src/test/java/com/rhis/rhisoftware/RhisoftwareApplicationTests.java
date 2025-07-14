@@ -1,0 +1,13 @@
+package com.rhis.rhisoftware;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class RhisoftwareApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

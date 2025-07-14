@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Ajouter un Stagiaire</title>
+</head>
+<body>
+<h1>Ajouter un stagiaire</h1>
+<form th:action="@{/stagiaires}" th:object="${stagiaire}" method="post">
+  <label>Prénom :</label>
+  <input type="text" th:field="*{prenom}" required /><br/>
+  <label>Nom :</label>
+  <input type="text" th:field="*{nom}" required /><br/>
+  <label>Email :</label>
+  <input type="email" th:field="*{email}" required /><br/>
+  <label>Programme de formation :</label>
+  <input type="text" th:field="*{programme_formation}" required /><br/>
+  <label>Date de début :</label>
+  <input type="date" th:field="*{date_debut}" required /><br/>
+  <label>Date de fin :</label>
+  <input type="date" th:field="*{date_fin}" /><br/>
+  <label>Statut :</label>
+  <input type="text" th:field="*{statut}" value="Actif" readonly /><br/>
+  <input type="submit" value="Enregistrer" />
+</form>
+<a th:href="@{/stagiaires}">Retour</a>
+</body>
+</html>

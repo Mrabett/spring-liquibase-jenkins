@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Gestion des Stagiaires</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+<h1>Liste des Stagiaires</h1>
+<a th:href="@{/stagiaires/new}">Ajouter un stagiaire</a>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Prénom</th>
+    <th>Nom</th>
+    <th>Email</th>
+    <th>Programme</th>
+    <th>Date Début</th>
+    <th>Date Fin</th>
+    <th>Statut</th>
+    <th>Actions</th>
+  </tr>
+  <tr th:each="stagiaire : ${stagiaires}">
+    <td th:text="${stagiaire.id}"></td>
+    <td th:text="${stagiaire.prenom}"></td>
+    <td th:text="${stagiaire.nom}"></td>
+    <td th:text="${stagiaire.email}"></td>
+    <td th:text="${stagiaire.programme_formation}"></td>
+    <td th:text="${#dates.format(stagiaire.date_debut, 'yyyy-MM-dd')}"></td>
+    <td th:text="${stagiaire.date_fin != null ? #dates.format(stagiaire.date_fin, 'yyyy-MM-dd') : ''}"></td>
+    <td th:text="${stagiaire.statut}"></td>
+    <td>
+      <a th:href="@{/stagiaires/{id}/edit(id=${stagiaire.id})}">Modifier</a>
+      <a th:href="@{/stagiaires/{id}/delete(id=${stagiaire.id})}" onclick="return confirm('Confirmer la suppression ?');">Supprimer</a>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
