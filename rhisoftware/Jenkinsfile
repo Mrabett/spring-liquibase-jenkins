@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     tools {
+        // S'assure que Maven est dispo sur le système Jenkins
         maven 'Maven 3.8.1'
     }
 
@@ -12,46 +13,30 @@ pipeline {
     }
 
     stages {
-        stage('🔧 Build') {
+        stage('Checkout') {
             steps {
-                dir('rhisoftware') {
-                    echo "🔨 Compilation du projet"
-                    sh 'mvn clean install -DskipTests'
-                }
+                git 'https://github.com/Mrabett/spring-liquibase-jenkins.git'
             }
         }
 
-        stage('📦 Update Database with Liquibase') {
+        stage('Run Liquibase') {
             steps {
-                dir('rhisoftware') {
-                    echo "📡 Exécution des migrations Liquibase"
-                    sh '''
-                        mvn liquibase:update \
-                            -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
-                            -Dliquibase.url=${DB_URL} \
-                            -Dliquibase.username=${DB_USERNAME} \
-                            -Dliquibase.password=${DB_PASSWORD}
-                    '''
-                }
+                sh '''
+                    cd rhisoftware
+                    liquibase --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml \
+                              --url=$DB_URL \
+                              --username=$DB_USERNAME \
+                              --password=$DB_PASSWORD \
+                              update
+                '''
             }
         }
 
-        stage('🚀 Run App') {
+        stage('Build & Run App') {
             steps {
-                dir('rhisoftware') {
-                    echo "🧠 Démarrage de l'application Spring Boot"
-                    sh 'nohup mvn spring-boot:run &'
-                }
+                sh 'cd rhisoftware && ./mvnw clean install'
+                sh 'cd rhisoftware && ./mvnw spring-boot:run'
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Déploiement réussi !'
-        }
-        failure {
-            echo '❌ Une erreur est survenue pendant le pipeline.'
         }
     }
 }
