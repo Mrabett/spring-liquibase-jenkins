@@ -1,11 +1,19 @@
+# src/main/resources/db/changelogs/db.changelog-master.yaml
+
 databaseChangeLog:
   - changeSet:
       id: 1
       author: hedi
       changes:
-        - addColumn:
-            tableName: stagiaires
+        - createTable:
+            tableName: employee
             columns:
               - column:
-                  name: encadrant
-                  type: VARCHAR(100)
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
