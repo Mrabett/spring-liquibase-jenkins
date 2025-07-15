@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh './mvnw clean install'
+            }
+        }
+
+        stage('Update Database with Liquibase') {
+            steps {
+                sh '''
+                    liquibase \
+                      --changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
+                      --url=jdbc:postgresql://192.168.0.102:5433/employe_db \
+                      --username=springuser \
+                      --password=springpass \
+                      update
+                '''
+            }
+        }
+
+        stage('Run App') {
+            steps {
+                sh './mvnw spring-boot:run'
+            }
+        }
+    }
+}
