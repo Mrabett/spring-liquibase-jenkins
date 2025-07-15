@@ -8,7 +8,6 @@ pipeline {
     }
 
     stages {
-
         stage('🔁 Pull Code') {
             steps {
                 echo '🧲 Clonage du dépôt depuis GitHub...'
@@ -19,8 +18,11 @@ pipeline {
         stage('🧱 Build Maven') {
             steps {
                 echo '🔧 Compilation du projet Spring Boot...'
-                sh 'chmod +x rhisoftware/mvnw'
-                sh './rhisoftware/mvnw clean install -DskipTests'
+                sh '''
+                    cd rhisoftware
+                    chmod +x mvnw
+                    ./mvnw clean install -DskipTests
+                '''
             }
         }
 
@@ -28,9 +30,10 @@ pipeline {
             steps {
                 echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-                    chmod +x rhisoftware/mvnw
-                    ./rhisoftware/mvnw liquibase:update \
-                      -Dliquibase.changeLogFile=rhisoftware/src/main/resources/db.changelogs/db.changelog-master.yaml \
+                    cd rhisoftware
+                    chmod +x mvnw
+                    ./mvnw liquibase:update \
+                      -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
                       -Dliquibase.url=${DB_URL} \
                       -Dliquibase.username=${DB_USERNAME} \
                       -Dliquibase.password=${DB_PASSWORD}
@@ -41,7 +44,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Déploiement terminé avec succès !'
+            echo '✅ Exécution Liquibase terminée avec succès !'
         }
         failure {
             echo '❌ Une erreur est survenue pendant l’exécution de Liquibase.'
