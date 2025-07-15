@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1' // Assure-toi que ce nom correspond à ce que tu as configuré dans Jenkins (Manage Jenkins > Global Tools)
+        maven 'Maven 3.8.1' // Assure-toi que ce nom est bien configuré dans Jenkins > Gérer les outils
     }
 
     environment {
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo "📡 Exécution des migrations Liquibase"
                 sh '''
-                    ./mvnw liquibase:update \
+                    mvn liquibase:update \
                         -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
                         -Dliquibase.url=${DB_URL} \
                         -Dliquibase.username=${DB_USERNAME} \
@@ -35,7 +35,7 @@ pipeline {
         stage('🚀 Run App') {
             steps {
                 echo "🧠 Démarrage de l'application Spring Boot"
-                sh 'nohup ./mvnw spring-boot:run &'
+                sh 'nohup mvn spring-boot:run &'
             }
         }
     }
