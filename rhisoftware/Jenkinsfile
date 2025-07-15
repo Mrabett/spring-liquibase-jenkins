@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DB_URL = 'jdbc:postgresql://192.168.0.102:5433/employe_db'
+        DB_URL = 'jdbc:postgresql://192.168.0.105:5433/employe_db'
         DB_USERNAME = 'springuser'
         DB_PASSWORD = 'springpass'
     }
@@ -19,7 +19,11 @@ pipeline {
         stage('🧱 Build Maven') {
             steps {
                 echo '🔧 Compilation du projet Spring Boot...'
-                sh 'cd rhisoftware && ./mvnw clean install'
+                sh '''
+                    cd rhisoftware
+                    chmod +x mvnw
+                    ./mvnw clean install
+                '''
             }
         }
 
@@ -27,7 +31,9 @@ pipeline {
             steps {
                 echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-                    cd rhisoftware && ./mvnw liquibase:update \
+                    cd rhisoftware
+                    chmod +x mvnw
+                    ./mvnw liquibase:update \
                       -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
                       -Dliquibase.url=${DB_URL} \
                       -Dliquibase.username=${DB_USERNAME} \
@@ -39,7 +45,11 @@ pipeline {
         stage('🚀 Run Application') {
             steps {
                 echo '🟢 Lancement de l\'application Spring Boot...'
-                sh 'cd rhisoftware && nohup ./mvnw spring-boot:run &'
+                sh '''
+                    cd rhisoftware
+                    chmod +x mvnw
+                    nohup ./mvnw spring-boot:run &
+                '''
             }
         }
     }
