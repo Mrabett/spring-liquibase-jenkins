@@ -1,30 +1,51 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.8.1' // Assure-toi que ce nom correspond à ce que tu as configuré dans Jenkins (Manage Jenkins > Global Tools)
+    }
+
+    environment {
+        DB_URL = 'jdbc:postgresql://192.168.0.102:5433/employe_db'
+        DB_USERNAME = 'springuser'
+        DB_PASSWORD = 'springpass'
+    }
+
     stages {
-        stage('Build') {
+        stage('🔧 Build') {
             steps {
-                sh './mvnw clean install'
+                echo "🔨 Compilation du projet"
+                sh './mvnw clean install -DskipTests'
             }
         }
 
-        stage('Update Database with Liquibase') {
+        stage('📦 Update Database with Liquibase') {
             steps {
+                echo "📡 Exécution des migrations Liquibase"
                 sh '''
-                    liquibase \
-                      --changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
-                      --url=jdbc:postgresql://192.168.0.102:5433/employe_db \
-                      --username=springuser \
-                      --password=springpass \
-                      update
+                    ./mvnw liquibase:update \
+                        -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
+                        -Dliquibase.url=${DB_URL} \
+                        -Dliquibase.username=${DB_USERNAME} \
+                        -Dliquibase.password=${DB_PASSWORD}
                 '''
             }
         }
 
-        stage('Run App') {
+        stage('🚀 Run App') {
             steps {
-                sh './mvnw spring-boot:run'
+                echo "🧠 Démarrage de l'application Spring Boot"
+                sh 'nohup ./mvnw spring-boot:run &'
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Déploiement réussi !'
+        }
+        failure {
+            echo '❌ Une erreur est survenue pendant le pipeline.'
         }
     }
 }
