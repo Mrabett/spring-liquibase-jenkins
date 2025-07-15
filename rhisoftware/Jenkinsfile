@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1' // nom EXACT de la configuration Maven dans Jenkins
+        maven 'Maven 3.8.1'
     }
 
     environment {
@@ -14,28 +14,34 @@ pipeline {
     stages {
         stage('🔧 Build') {
             steps {
-                echo "🔨 Compilation du projet"
-                sh 'mvn clean install -DskipTests'  // 👈 Utilise Maven installé par Jenkins
+                dir('rhisoftware') {
+                    echo "🔨 Compilation du projet"
+                    sh 'mvn clean install -DskipTests'
+                }
             }
         }
 
         stage('📦 Update Database with Liquibase') {
             steps {
-                echo "📡 Exécution des migrations Liquibase"
-                sh '''
-                    mvn liquibase:update \
-                        -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
-                        -Dliquibase.url=${DB_URL} \
-                        -Dliquibase.username=${DB_USERNAME} \
-                        -Dliquibase.password=${DB_PASSWORD}
-                '''
+                dir('rhisoftware') {
+                    echo "📡 Exécution des migrations Liquibase"
+                    sh '''
+                        mvn liquibase:update \
+                            -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
+                            -Dliquibase.url=${DB_URL} \
+                            -Dliquibase.username=${DB_USERNAME} \
+                            -Dliquibase.password=${DB_PASSWORD}
+                    '''
+                }
             }
         }
 
         stage('🚀 Run App') {
             steps {
-                echo "🧠 Démarrage de l'application Spring Boot"
-                sh 'nohup mvn spring-boot:run &'
+                dir('rhisoftware') {
+                    echo "🧠 Démarrage de l'application Spring Boot"
+                    sh 'nohup mvn spring-boot:run &'
+                }
             }
         }
     }
