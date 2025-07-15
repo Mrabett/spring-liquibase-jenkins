@@ -1,42 +1,55 @@
 pipeline {
     agent any
 
-    tools {
-        // S'assure que Maven est dispo sur le système Jenkins
-        maven 'Maven 3.8.1'
-    }
-
     environment {
-        DB_URL = 'jdbc:postgresql://192.168.0.102:5433/employe_db'
+        DB_URL = 'jdbc:postgresql://192.168.0.105:5433/employe_db'
         DB_USERNAME = 'springuser'
         DB_PASSWORD = 'springpass'
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('🔁 Pull Code') {
             steps {
-                git 'https://github.com/Mrabett/spring-liquibase-jenkins.git'
+                echo '🧲 Clonage du dépôt depuis GitHub...'
+                checkout scm
             }
         }
 
-        stage('Run Liquibase') {
+        stage('🧱 Build Maven') {
             steps {
+                echo '🔧 Compilation du projet Spring Boot...'
+                sh './mvnw clean install'
+            }
+        }
+
+        stage('📦 Liquibase Migration') {
+            steps {
+                echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-                    cd rhisoftware
-                    liquibase --changeLogFile=src/main/resources/db/changelogs/db.changelog-master.yaml \
-                              --url=$DB_URL \
-                              --username=$DB_USERNAME \
-                              --password=$DB_PASSWORD \
-                              update
+                ./mvnw liquibase:update \
+                  -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
+                  -Dliquibase.url=${DB_URL} \
+                  -Dliquibase.username=${DB_USERNAME} \
+                  -Dliquibase.password=${DB_PASSWORD}
                 '''
             }
         }
 
-        stage('Build & Run App') {
+        stage('🚀 Run Application') {
             steps {
-                sh 'cd rhisoftware && ./mvnw clean install'
-                sh 'cd rhisoftware && ./mvnw spring-boot:run'
+                echo '🟢 Lancement de l\'application Spring Boot...'
+                sh 'nohup ./mvnw spring-boot:run &'
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Déploiement terminé avec succès !'
+        }
+        failure {
+            echo '❌ Une erreur est survenue pendant le pipeline.'
         }
     }
 }
