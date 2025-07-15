@@ -32,7 +32,7 @@ pipeline {
                 sh '''
   chmod +x rhisoftware/mvnw
   ./rhisoftware/mvnw -f rhisoftware/pom.xml liquibase:update \
-    -Dliquibase.changeLogFile=classpath:db/changelogs/db.changelog-master.yaml \
+    -Dliquibase.changeLogFile=src/main/resources/db/changelogs/db.changelog-master.yaml
     -Dliquibase.url=jdbc:postgresql://192.168.0.102:5433/employe_db \
     -Dliquibase.username=springuser \
     -Dliquibase.password=springpass
