@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh '''
                     cd rhisoftware
-                    liquibase --changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml \
+                    liquibase --changeLogFile=src/main/resources/db/changelogs/db.changelog-master.yaml \
                               --url=$DB_URL \
                               --username=$DB_USERNAME \
                               --password=$DB_PASSWORD \
