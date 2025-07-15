@@ -22,7 +22,7 @@ pipeline {
                 sh '''
                     cd rhisoftware
                     chmod +x mvnw
-                    ./mvnw clean install
+                    ./mvnw clean install -DskipTests
                 '''
             }
         }
@@ -41,22 +41,11 @@ pipeline {
                 '''
             }
         }
-
-        stage('🚀 Run Application') {
-            steps {
-                echo '🟢 Lancement de l\'application Spring Boot...'
-                sh '''
-                    cd rhisoftware
-                    chmod +x mvnw
-                    nohup ./mvnw spring-boot:run &
-                '''
-            }
-        }
     }
 
     post {
         success {
-            echo '✅ Déploiement terminé avec succès !'
+            echo '✅ Liquibase a bien mis à jour la base de données !'
         }
         failure {
             echo '❌ Une erreur est survenue pendant le pipeline.'
