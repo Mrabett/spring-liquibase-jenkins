@@ -19,7 +19,7 @@ pipeline {
         stage('🧱 Build Maven') {
             steps {
                 echo '🔧 Compilation du projet Spring Boot...'
-                sh './mvnw clean install'
+                sh 'cd rhisoftware && ./mvnw clean install'
             }
         }
 
@@ -27,11 +27,11 @@ pipeline {
             steps {
                 echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-                ./mvnw liquibase:update \
-                  -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
-                  -Dliquibase.url=${DB_URL} \
-                  -Dliquibase.username=${DB_USERNAME} \
-                  -Dliquibase.password=${DB_PASSWORD}
+                    cd rhisoftware && ./mvnw liquibase:update \
+                      -Dliquibase.changeLogFile=src/main/resources/db.changelogs/db.changelog-master.yaml \
+                      -Dliquibase.url=${DB_URL} \
+                      -Dliquibase.username=${DB_USERNAME} \
+                      -Dliquibase.password=${DB_PASSWORD}
                 '''
             }
         }
@@ -39,7 +39,7 @@ pipeline {
         stage('🚀 Run Application') {
             steps {
                 echo '🟢 Lancement de l\'application Spring Boot...'
-                sh 'nohup ./mvnw spring-boot:run &'
+                sh 'cd rhisoftware && nohup ./mvnw spring-boot:run &'
             }
         }
     }
