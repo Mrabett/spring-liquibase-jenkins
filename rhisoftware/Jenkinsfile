@@ -33,7 +33,7 @@ pipeline {
                     cd rhisoftware
                     chmod +x mvnw
                     ./mvnw liquibase:update \
-                      -Dliquibase.changeLogFile=classpath:db.changelogs/db.changelog-master.yaml \
+                      -Dliquibase.changeLogFile=classpath:db/changelogs/db.changelog-master.yaml \
                       -Dliquibase.url=${DB_URL} \
                       -Dliquibase.username=${DB_USERNAME} \
                       -Dliquibase.password=${DB_PASSWORD}
