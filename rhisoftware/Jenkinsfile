@@ -30,14 +30,14 @@ pipeline {
             steps {
                 echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-                    cd rhisoftware
-                    chmod +x mvnw
-                    ./mvnw liquibase:update \
-                      -Dliquibase.changeLogFile=classpath:db/changelogs/db.changelog-master.yaml \
-                      -Dliquibase.url=${DB_URL} \
-                      -Dliquibase.username=${DB_USERNAME} \
-                      -Dliquibase.password=${DB_PASSWORD}
-                '''
+  chmod +x rhisoftware/mvnw
+  ./rhisoftware/mvnw -f rhisoftware/pom.xml liquibase:update \
+    -Dliquibase.changeLogFile=classpath:db/changelogs/db.changelog-master.yaml \
+    -Dliquibase.url=jdbc:postgresql://192.168.0.102:5433/employe_db \
+    -Dliquibase.username=springuser \
+    -Dliquibase.password=springpass
+'''
+
             }
         }
     }
