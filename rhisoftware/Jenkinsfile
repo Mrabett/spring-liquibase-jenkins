@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1' // Assure-toi que ce nom est bien configuré dans Jenkins > Gérer les outils
+        maven 'Maven 3.8.1' // nom EXACT de la configuration Maven dans Jenkins
     }
 
     environment {
@@ -15,7 +15,7 @@ pipeline {
         stage('🔧 Build') {
             steps {
                 echo "🔨 Compilation du projet"
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean install -DskipTests'  // 👈 Utilise Maven installé par Jenkins
             }
         }
 
