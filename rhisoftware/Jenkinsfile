@@ -8,6 +8,7 @@ pipeline {
     }
 
     stages {
+
         stage('🔁 Pull Code') {
             steps {
                 echo '🧲 Clonage du dépôt depuis GitHub...'
@@ -30,24 +31,33 @@ pipeline {
             steps {
                 echo '📥 Exécution des migrations Liquibase...'
                 sh '''
-  chmod +x rhisoftware/mvnw
-  ./rhisoftware/mvnw -f rhisoftware/pom.xml liquibase:update \
-    -Dliquibase.changeLogFile=src/main/resources/db/changelogs/db.changelog-master.yaml
-    -Dliquibase.url=jdbc:postgresql://192.168.0.102:5433/employe_db \
-    -Dliquibase.username=springuser \
-    -Dliquibase.password=springpass
-'''
+                    chmod +x rhisoftware/mvnw
+                    ./rhisoftware/mvnw -f rhisoftware/pom.xml liquibase:update \
+                      -Dliquibase.changeLogFile=src/main/resources/db/changelogs/db.changelog-master.yaml \
+                      -Dliquibase.url=${DB_URL} \
+                      -Dliquibase.username=${DB_USERNAME} \
+                      -Dliquibase.password=${DB_PASSWORD}
+                '''
+            }
+        }
 
+        stage('🚀 Run Application') {
+            steps {
+                echo '📢 Démarrage de l\'application Spring Boot...'
+                sh '''
+                    cd rhisoftware
+                    nohup ./mvnw spring-boot:run &
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '✅ Exécution Liquibase terminée avec succès !'
+            echo '✅ Déploiement réussi !'
         }
         failure {
-            echo '❌ Une erreur est survenue pendant l’exécution de Liquibase.'
+            echo '❌ Une erreur est survenue pendant le pipeline.'
         }
     }
 }
