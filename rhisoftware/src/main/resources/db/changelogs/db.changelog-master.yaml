@@ -26,3 +26,17 @@ databaseChangeLog:
               - column:
                   name: salaire
                   type: decimal(10,2)
+
+  - changeSet:
+      id: 3
+      author: hedi
+      changes:
+        - addColumn:
+            tableName: employee
+            columns:
+              - column:
+                  name: phone
+                  type: varchar(20)
+              - column:
+                  name: email
+                  type: varchar(255)
