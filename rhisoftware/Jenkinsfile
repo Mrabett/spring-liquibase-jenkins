@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DB_URL = 'jdbc:postgresql://192.168.0.104:5433/employe_db'
+        DB_URL = 'jdbc:postgresql://10.10.60.23:5433/employe_db'
         DB_USERNAME = 'springuser'
         DB_PASSWORD = 'springpass'
     }
