@@ -28,15 +28,13 @@ databaseChangeLog:
                   type: decimal(10,2)
 
   - changeSet:
-      id: 3
-      author: hedi
+      id: 4
+      author: yassine
       changes:
         - addColumn:
             tableName: employee
             columns:
               - column:
-                  name: phone
+                  name: poste
                   type: varchar(20)
-              - column:
-                  name: email
-                  type: varchar(255)
+             
